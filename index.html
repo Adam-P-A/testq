@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #000; color: #fff; }
+        #chat-container { width: 300px; margin: auto; }
+        #messages { height: 200px; overflow-y: scroll; border: 1px solid #fff; padding: 10px; }
+        #input { width: 100%; }
+        #known-words { display: none; }
+        button { margin: 5px; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <input type="text" id="input" placeholder="Wpisz wiadomość...">
+        <button onclick="sendMessage()">Wyślij</button>
+        <button onclick="toggleWords()">Pokaż/Ukryj Słowa</button>
+        <div id="known-words">
+            <h4>Znane słowa:</h4>
+            <ul id="word-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        const bots = {
+            "Jędrzej Gej": "Cześć! Jestem Jędrzej, lubię grać w gry i rozmawiać o filmach.",
+            "Borys Gracz": "Cześć! Jestem Borys, jestem zapalonym graczem i lubię sport.",
+            "Marta Książka": "Cześć! Jestem Marta, miłośniczka książek i literatury.",
+            "Adam Muzyk": "Cześć! Jestem Adam, uwielbiam muzykę i grać na instrumentach.",
+            "Ewa Tech": "Cześć! Jestem Ewa, interesuję się nowymi technologiami.",
+            "Ola Podróżniczka": "Cześć! Jestem Ola, uwielbiam podróże i odkrywanie nowych miejsc.",
+            "Krzysiek Sportowiec": "Cześć! Jestem Krzysiek, lubię sport i aktywny styl życia.",
+            "Basia Artystka": "Cześć! Jestem Basia, pasjonuję się sztuką i malarstwem.",
+            "Marek Kucharz": "Cześć! Jestem Marek, gotowanie to moja pasja.",
+            "Kasia Naukowiec": "Cześć! Jestem Kasia, interesuję się nauką i badaniami."
+        };
+
+        let knownWords = [
+            "matka", "ojciec", "gra", "chat", "hello", "co", "jak", "dlaczego",
+            "kto", "gdzie", "lubię", "idziemy", "cześć", "dzięki", "proszę",
+            "tak", "nie", "może", "oczywiście", "zapytaj", "nigdy", "zawsze",
+            // Dodaj więcej słów do osiągnięcia 500
+        ];
+        
+        const additionalWords = [
+            "woda", "powietrze", "ziemia", "ogień", "nauka", "technologia", 
+            "sztuka", "muzyka", "sport", "film", "podróż", "kultura", 
+            "życie", "zabawa", "komputer", "książka", "internet", "rozwój", 
+            "przyjaźń", "szkoła", "miłość", "praca", "relacja", "uczenie się"
+            // Dodać wystarczająco dużo słów, aby łącznie było 500
+        ];
+
+        let responses = {
+            "kim jesteś?": "Jestem chatbotem. Wybierz jednego z następujących: " + Object.keys(bots).join(", "),
+            "co to jest?": "To jest chatbot, który uczy się i rozwija!",
+            "jak się masz?": "Jestem tutaj, aby Ci pomóc!",
+            // Możesz dodać inne komendy i odpowiedzi tutaj.
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("input");
+            const message = input.value;
+            input.value = '';
+            appendMessage("Ty: " + message);
+            processMessage(message);
+        }
+
+        function processMessage(message) {
+            const lowerMessage = message.toLowerCase();
+            if (responses[lowerMessage]) {
+                appendMessage("Chatbot: " + responses[lowerMessage]);
+            } else if (message.toLowerCase().includes("kim jesteś")) {
+                appendMessage("Chatbot: " + "Wybierz jednego z następujących: " + Object.keys(bots).join(", "));
+            } else {
+                const botResponse = generateResponse(message);
+                appendMessage("Chatbot: " + botResponse);
+            }
+            addKnownWords(message);
+        }
+
+        function generateResponse(message) {
+            const randomResponses = [
+                "Nie rozumiem, ale uczę się!",
+                "To ciekawe! Powiedz mi więcej.",
+                "Spróbuj powiedzieć to inaczej.",
+                "Czekam na Twoje pytania!",
+                "Zaraz się nauczę tego, co mówisz!",
+                "Czy masz jakieś inne pytania?"
+            ];
+            return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+        }
+
+        function appendMessage(message) {
+            const messages = document.getElementById("messages");
+            messages.innerHTML += "<p>" + message + "</p>";
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function toggleWords() {
+            const knownWordsDiv = document.getElementById("known-words");
+            knownWordsDiv.style.display = knownWordsDiv.style.display === 'none' ? 'block' : 'none';
+            const wordList = document.getElementById("word-list");
+            wordList.innerHTML = "";
+            knownWords.forEach(word => {
+                wordList.innerHTML += "<li>" + word + "</li>";
+            });
+        }
+
+        function addKnownWords(message) {
+            const words = message.split(" ");
+            words.forEach(word => {
+                if (!knownWords.includes(word) && knownWords.length < 500) {
+                    knownWords.push(word);
+                }
+            });
+        }
+
+        // Wypełnij początkową listę słów do 500
+        knownWords = knownWords.concat(additionalWords.slice(0, 500 - knownWords.length));
+    </script>
+</body>
+</html>
